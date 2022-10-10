@@ -1,0 +1,23 @@
+{
+  "name": "project-5-product-management",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/functionupjkg/Project-5-Product-Management.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/functionupjkg/Project-5-Product-Management/issues"
+  },
+  "homepage": "https://github.com/functionupjkg/Project-5-Product-Management#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^6.6.5"
+  }
+}
