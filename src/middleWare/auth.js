@@ -10,7 +10,7 @@ const authentic = async function (req, res, next) {
         if (!token) {
             return res.status(404).send({ status: false, msg: "token must be present" });
         }
-        token = token.slice(7)
+        token = token.slice(7) // bearer Token = Token 
         jwt.verify(token, "Project5", (err, decodedToken) => {
 
             if (err) {
@@ -18,7 +18,7 @@ const authentic = async function (req, res, next) {
                 let message = err.message = "jwt expiry" ? "token is expired , please login again" : "invalid token"
                 return res.status(401).send({ status: false, msg: message })
             }
-
+           
             req.loggedInUser = decodedToken;
             next()
 

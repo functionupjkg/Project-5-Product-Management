@@ -14,7 +14,7 @@ router.post("/register",userController.createUser)
 
 router.post("/login" , userController.loginUser)
 
-router.get("/user/:userId/profile" , authentic , userController.getUserById)
+router.get("/user/:userId/profile" , authentic , authorize,  userController.getUserById)
 
 router.put("/user/:userId/profile", authentic, authorize, userController.updateUser)
 

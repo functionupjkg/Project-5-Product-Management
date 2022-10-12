@@ -44,7 +44,7 @@ const createUser = async (req, res) => {
             return res.status(400).send({ status: false, message: `This ${email} already registered, try another.` })
         }
 
-        if (!files || (files && files.length === 0)) {
+        if ( files.length === 0) {
             return res.status(400).send({ status: false, message: "ProfileImage is required." });
         }
 
@@ -68,7 +68,7 @@ const createUser = async (req, res) => {
             return res.status(400).send({ status: false, message: "Password is mandatory" })
         }
         if (!isValidpassword(password)) {
-            return res.status(400).send({ status: false, message: "Password Should be Min-8 & Max-15 Ex- Abcd@123" })
+            return res.status(400).send({ status: false, message: "Password Should be Min-8 & Max-15, it contain atleast -> 1 Uppercase , 1 Lowercase , 1 Number , 1 Special Character  Ex- Abcd@123" })
         }
 
         // let salt = await bcrypt.genSalt(10);
@@ -160,23 +160,23 @@ const loginUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "Please provide some detail" })
         }
 
-        if (!isValid(email)) {
+        if (!email) {
             return res.status(400).send({ status: false, message: "Please provide EmailId" })
         }
         if (!isValidemail(email)) {
             return res.status(400).send({ status: false, msg: "Email is Invalid" })
         }
-        if (!isValid(password)) {
+        if (!(password)) {
             return res.send.status(400).send({ status: false, message: "Please provide Password" })
         }
         if (!isValidpassword(password)) {
-            return res.send.status(400).send({ status: false, message: "Password is Invalid , password contain min 8 and max 15 character" })
+            return res.status(400).send({ status: false, message: "Password Should be Min-8 & Max-15, it contain atleast -> 1 Uppercase , 1 Lowercase , 1 Number , 1 Special Character  Ex- Abcd@123" })
         }
 
         const user = await userModel.findOne({ email: email })
         if (!user) { return res.status(400).send({ status: false, message: "Please provide correct email" }) }
 
-        const isMatch = await bcrypt.compare(password, user.password)
+        const isMatch = await bcrypt.compare(password, user.password) // compare logIN and DB password , return boolean value
         if (!isMatch) { return res.status(400).send({ Status: false, msg: "incorrect credential" }) }
 
         const token = jwt.sign({
@@ -204,7 +204,7 @@ const getUserById = async function (req, res) {
 
         let validId = isValidObjectId(userId)
 
-        if (!validId) { res.status(400).send({ status: false, message: "invalid userId" }) }
+        if (!validId) { return res.status(400).send({ status: false, message: "invalid userId" }) }
 
         let getUser = await userModel.findById({ _id: userId })
         if (!getUser) {
@@ -233,9 +233,10 @@ const updateUser = async function (req, res) {
         const userDoc = await userModel.findById({ _id: userId })
         if (!userDoc) { return res.status(400).send({ status: false, msg: `${userId} is not from user Collection` }) }
 
-
+        console.log(Object.keys(req.body).length) 
+        console.log(file.length)
         if (Object.keys(req.body).length == 0 && file.length == 0) {
-            return res.status(200).send({ status: true, msg: "Update succefully , but No field updated" })
+            return res.status(400).send({ status: false, msg: "data required for profile updated" })
         }
 
         let data = JSON.parse(JSON.stringify(req.body))
@@ -269,8 +270,10 @@ const updateUser = async function (req, res) {
 
             updFiled.email = email
         }
-        if (file.length !== 0) {
+        console.log(file)
 
+        if (file.length !== 0) {
+            
             if (!isValidfile(file[0].originalname)) { return res.status(400).send({ status: false, message: "ProfileImage is Invalid." }); }
 
             let profilepic = await uploadFile(file[0])
