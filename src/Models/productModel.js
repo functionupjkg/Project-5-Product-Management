@@ -4,7 +4,7 @@ const productSchema = new mongoose.Schema({
 
     title: { type: String, required: true, unique: true },
     description: { type: String, required: true },
-    price: { type: Number, required: true },
+    price: { type: Number, required: true }, // number / decimal
     currencyId: { type: String, required: true }, // currencyId = INR
     currencyFormat: { type: String, required: true }, // currencyFormat  = Rs
     isFreeShipping: { type: Boolean, default: false },
@@ -17,6 +17,7 @@ const productSchema = new mongoose.Schema({
 
 }, { timestamps: true })
 
+// ^\d+\.\d+$
 
 module.exports = mongoose.model("product", productSchema)
 
