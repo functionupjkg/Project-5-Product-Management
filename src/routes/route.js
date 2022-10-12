@@ -25,6 +25,8 @@ router.put("/user/:userId/profile", authentic, authorize, userController.updateU
 
 router.get("/products" , productController.getProduct)
 router.get("/products/:productId" , productController.getDetailsFromParam)
+router.delete("/products/:productId", productController.deleteById)
+
 
 module.exports = router
 

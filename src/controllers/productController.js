@@ -1,4 +1,4 @@
-const { isValidObjectId } = require("mongoose")
+const { isValidObjectId } = require("../validations/validator")
 const productModel = require("../Models/productModel")
 
 
@@ -73,7 +73,34 @@ const getDetailsFromParam = async function (req, res) {
 }
 
 
+const deleteById = async function (req, res) {
+
+    try {
+        let productId = req.params.productId
+
+        if (!isValidObjectId(productId)) {
+
+            return res.status(400).send({ status: false, message: "Invalid ProductId " })
+        }
+        let Product = await productModel.findOneAndUpdate({ _id: productId , isDeleted:false,},{$set:{isDeleted:true,deletedAt:Date.now()}},{new:true})
+
+        if (!Product) {
+            return res.status(404).send({ status: false, message: "No product found by given ProductId" })
+        }
+        return res.status(200).send({ status: true,message:"Product Deleted Succesfully", data:Product })
+
+    } catch (error) {
+        return res.status(500).send({ status: false, msg: error.message })
+
+    }
+}
+
+
+
+
+
 module.exports.getProduct = getProduct
 module.exports.getDetailsFromParam = getDetailsFromParam
+module.exports.deleteById=deleteById
 
 
