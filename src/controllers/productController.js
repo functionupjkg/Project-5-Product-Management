@@ -1,0 +1,1 @@
+const productModel = require("../Models/productModel")
