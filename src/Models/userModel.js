@@ -8,16 +8,19 @@ const userSchema = new mongoose.Schema({
     profileImage : {type : String , required : true},
     phone : {type : String , required : true , unique : true},
     password : {type : String , required : true , min : 8 , max : 15},
-    address : {
-        shipping : {type : String , required : true},
-        city : {type : String , required : true},
-        pincode : {type : Number , required : true}
-    },
-    billing : {
-        street : {type : String , required : true},
-        city : {type : String , required : true},
-        pincode : {type : Number , required : true}
-    }      
+    address: {
+
+        shipping: {
+            street: { type: String, required: true },
+            city: { type: String, required: true },
+            pincode: { type: Number, required: true }
+        },
+        billing: {
+            street: { type: String, required: true },
+            city: { type: String, required: true },
+            pincode: { type: Number, required: true }
+        }
+    }
 },{timestamps : true})
 
 module.exports = mongoose.model("user",userSchema)
