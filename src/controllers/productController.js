@@ -20,7 +20,7 @@ const getProduct = async function (req, res) {
 
             const product = productModel.findOne({ title: { $regex: name, $options: "i" } })
             if (!product) { return res.status(404).send({ status: false, msg: "" }) }
-            console.log(product)
+
             productDetail.title = { $regex: name, $options: "i" }
 
         }
@@ -62,7 +62,7 @@ const getDetailsFromParam = async function (req, res) {
         if (!productId) return res.status(400).send({ status: false, message: "No parameter found" })
         if (!isValidObjectId(productId)) return res.status(400).send({ status: false, message: "Invalid ProductID" })
 
-        const ProductByProductId = await productModel.findById({ _id: productId, isDeleted: false })
+        const ProductByProductId = await productModel.findOne({ _id: productId, isDeleted: false })
         if (!ProductByProductId) return res.status(404).send({ staus: false, message: "No such product exist with this Id" })
 
         return res.status(200).send({ status: true, message: "success", data: ProductByProductId })
@@ -82,12 +82,13 @@ const deleteById = async function (req, res) {
 
             return res.status(400).send({ status: false, message: "Invalid ProductId " })
         }
-        let Product = await productModel.findOneAndUpdate({ _id: productId , isDeleted:false,},{$set:{isDeleted:true,deletedAt:Date.now()}},{new:true})
+        let productDel = await productModel.findOneAndUpdate({ _id: productId, isDeleted: false, }, { $set: { isDeleted: true, deletedAt: Date.now() } }, { new: true })
 
-        if (!Product) {
+        console.log(productDel)
+        if (!productDel) {
             return res.status(404).send({ status: false, message: "No product found by given ProductId" })
         }
-        return res.status(200).send({ status: true,message:"Product Deleted Succesfully", data:Product })
+        return res.status(200).send({ status: true, message: "Product Deleted Succesfully", data: productDel })
 
     } catch (error) {
         return res.status(500).send({ status: false, msg: error.message })
@@ -101,6 +102,6 @@ const deleteById = async function (req, res) {
 
 module.exports.getProduct = getProduct
 module.exports.getDetailsFromParam = getDetailsFromParam
-module.exports.deleteById=deleteById
+module.exports.deleteById = deleteById
 
 
