@@ -42,8 +42,19 @@ const isValid = function (value) {
 
 //<<----------------Validation for imageExtension ---------------->>
 const isValidfile = function (filename) {
-    return (/^.*\.(png|jpg|JPG|gif|GIF|webp|tiff?|bmp)$/).test(filename)
+    return (/^.*\.(jfif|png|jpg|JPG|gif|GIF|webp|tiff?|bmp)$/).test(filename)
 };
+
+//<<----------------Validation for Price ---------------->>
+const isValidPrice = function (price) {
+    // return /^[1-9][0-9]{0,7}(\.[0-9]{2})?$/.test(price);
+    return /^(\d*\.)?\d+$/.test(price);
+  }; 
+
+//<<----------------Validation for installment ---------------->>
+  const isValidintall = function (value) {
+    return /^[1-9][0-9]?$/.test(value); // 1-99 Number.
+  };
 
 //---------------------------------------------------------------------------------//
 
@@ -81,4 +92,4 @@ let uploadFile = async (file) => {
 
 
 
-module.exports = {isValidObjectId, isValidstring, isValidemail, isValidphone, isValidpassword, isValidpin, isValid,isValidfile,uploadFile}
+module.exports = {isValidObjectId, isValidstring, isValidemail, isValidphone, isValidpassword, isValidpin, isValid,isValidfile,uploadFile,isValidPrice,isValidintall}

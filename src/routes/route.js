@@ -23,9 +23,13 @@ router.put("/user/:userId/profile", authentic, authorize, userController.updateU
 
 //--------------------------- productController----------------------------------------
 
+router.post("/products" , productController.createProduct)
+
 router.get("/products" , productController.getProduct)
 
 router.get("/products/:productId" , productController.getDetailsFromParam)
+
+router.put("/products/:productId" , productController.updateProduct)
 
 router.delete("/products/:productId", productController.deleteById)
 

@@ -39,7 +39,7 @@ const createUser = async (req, res) => {
         if (!isValidemail(email)) {
             return res.status(400).send({ status: false, message: "Enter Valid Email" })
         }
-        let checkMail = await userModel.findOne({ email })
+        let checkMail = await userModel.findOne({ email : email  , isDeleted : false})
         if (checkMail) {
             return res.status(400).send({ status: false, message: `This ${email} already registered, try another.` })
         }
@@ -59,7 +59,7 @@ const createUser = async (req, res) => {
         if (!isValidphone(phone)) {
             return res.status(400).send({ status: false, message: "Enter Valid Phone No. only 10 digits." })
         }
-        let checkPhone = await userModel.findOne({ phone })
+        let checkPhone = await userModel.findOne({ phone : phone , isDeleted : false })
         if (checkPhone) {
             return res.status(400).send({ status: false, message: `This ${phone} already registered, try another.` })
         }
@@ -173,7 +173,7 @@ const loginUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "Password Should be Min-8 & Max-15, it contain atleast -> 1 Uppercase , 1 Lowercase , 1 Number , 1 Special Character  Ex- Abcd@123" })
         }
 
-        const user = await userModel.findOne({ email: email })
+        const user = await userModel.findOne({ email: email , isDeleted : false})
         if (!user) { return res.status(400).send({ status: false, message: "Please provide correct email" }) }
 
         const isMatch = await bcrypt.compare(password, user.password) // compare logIN and DB password , return boolean value
@@ -206,7 +206,7 @@ const getUserById = async function (req, res) {
 
         if (!validId) { return res.status(400).send({ status: false, message: "invalid userId" }) }
 
-        let getUser = await userModel.findById({ _id: userId })
+        let getUser = await userModel.findById({ _id: userId , isDeleted : false})
         if (!getUser) {
 
             return res.status(404).send({ status: false, message: "No User found With given Id " })
@@ -230,11 +230,12 @@ const updateUser = async function (req, res) {
 
         if (!isValidObjectId(userId)) { return res.status(400).send({ status: false, msg: "invalid userId" }) }
 
-        const userDoc = await userModel.findById({ _id: userId })
-        if (!userDoc) { return res.status(400).send({ status: false, msg: `${userId} is not from user Collection` }) }
+        const userDoc = await userModel.findById({ _id: userId , isDeleted : false})
+        if (!userDoc) { 
+            return res.status(400).send({ status: false, msg: `${userId} is not from user Collection` }) 
+        }
 
-        console.log(Object.keys(req.body).length) 
-        console.log(file.length)
+        
         if (Object.keys(req.body).length == 0 && file.length == 0) {
             return res.status(400).send({ status: false, msg: "data required for profile updated" })
         }
@@ -264,7 +265,7 @@ const updateUser = async function (req, res) {
             if (!isValid(email)) { return res.status(400).send({ status: false, msg: "email must be string" }) }
             if (!isValidemail(email)) { return res.status(400).send({ status: false, msg: "Email is Invalid" }) }
 
-            const checkEmail = await userModel.findOne({ email: email })
+            const checkEmail = await userModel.findOne({ email: email , isDeleted : false })
 
             if (checkEmail) { return res.status(409).send({ status: false, msg: `${email} already registered, try another.` }) }
 
@@ -285,7 +286,7 @@ const updateUser = async function (req, res) {
             if (!isValid(phone)) { return res.status(400).send({ status: false, msg: "phone must be string" }) }
             if (!isValidphone(phone)) { return res.status(400).send({ status: false, msg: "Enter Valid Phone No. only 10 digits." }) }
 
-            const checkPhone = await userModel.findOne({ phone })
+            const checkPhone = await userModel.findOne({ phone : phone , isDeleted : false })
 
             if (checkPhone) { return res.status(409).send({ status: false, msg: `${phone} already registered, try another.` }) }
 
