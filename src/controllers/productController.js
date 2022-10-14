@@ -66,9 +66,9 @@ const createProduct = async function (req, res) {
             }
 
             availableSizes = availableSizes.split(",").map((x) => x.trim().toUpperCase())
-            if (availableSizes.length == 0) {
-                return res.status(400).send({ status: false, message: 'Please put product availablesizes' })
-            }
+            // if (availableSizes.length == 0) {
+            //     return res.status(400).send({ status: false, message: 'Please put product availablesizes' })
+            // }
 
             let sizes = ["S", "XS", "M", "X", "L", "XXL", "XL"]
             for (let i = 0; i < availableSizes.length; i++) {
