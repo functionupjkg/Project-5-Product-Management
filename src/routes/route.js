@@ -2,7 +2,8 @@ const express = require("express")
 const router = express.Router()
 const userController = require("../controllers/userController")
 const productController = require("../controllers/productController")
-const {authentic , authorize} = require("../middleWare/auth")
+const cartController = require("../controllers/cartController")
+const {auth} = require("../middleWare/auth")
 
 
 router.post("/test-me", (req,res)=>{
@@ -17,9 +18,9 @@ router.post("/register",userController.createUser)
 
 router.post("/login" , userController.loginUser)
 
-router.get("/user/:userId/profile" , authentic , authorize,  userController.getUserById)
+router.get("/user/:userId/profile" , auth, userController.getUserById)
 
-router.put("/user/:userId/profile", authentic, authorize, userController.updateUser)
+router.put("/user/:userId/profile", auth, userController.updateUser)
 
 //--------------------------- productController----------------------------------------
 
@@ -33,6 +34,13 @@ router.put("/products/:productId" , productController.updateProduct)
 
 router.delete("/products/:productId", productController.deleteById)
 
+//--------------------------cartController----------------------------------------
+
+router.post("/users/:userId/cart", auth , cartController.createCart )
+
+router.get("/users/:userId/cart", auth , cartController.getCart )
+
+router.delete("/users/:userId/cart", auth , cartController.deleteCart )
 
 module.exports = router
 
