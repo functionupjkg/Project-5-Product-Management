@@ -84,5 +84,77 @@ const createOrder = async function (req, res) {
     }
 }
 
+const updateOrder=async function(req,res){
+
+    try {
+        
+        let userId=req.params.userId
+        let tokenUserId=req.loggedInUser.user
+        let data=req.body
+        const {orderId,status}=data
+        if(userId){
+
+            if(!isValidObjectId(userId)){return res.status(400).send({status:false,message:"Invalid UserId"})}
+            
+            
+            const checkUser=await userModel.findById(userId)
+            
+            if(!checkUser)
+            {return res.status(404).send({status:false,message:"User not found with given UserId"})}
+           
+            if(userId!==tokenUserId.toString()){return res.status(403).send({status:false,message:"user is not Authorised for this operation"})}
+            
+            if(Object.keys(data).length==0)
+            {return res.status(400).send({status:false,message:"Body should not be empty"})}
+            
+            if(!orderId){return res.status(400).send({status:false,message:"OrderId is required"})}
+
+            if(!isValidObjectId(orderId)){return res.status(400).send({status:false,message:"Invalid orderId"})}
+
+            if(!status){return res.status(400).send({status:false,message:"Status is required"})}
+
+
+            let statusArr=[ "completed", "cancelled"]
+            
+            // if(status=="pending"){return res.status(400).send({status:false,message:"Status pending is not allowed"})}
+              
+            if(!statusArr.includes(status))
+            {return res.status(400).send({status:false,message:"Status should only Completed or cancelled"})}
+            
+            const checkStatus=await orderModel.findById(orderId)
+            console.log(checkStatus)
+            
+            if(checkStatus.status=="completed"&&[status=="cancelled" || status=="completed"]){
+                
+                return res.status(400).send({status:false,message:"Invalid Status ,Order is already completed "})
+            }
+            if(checkStatus.status=="cancelled"&&[status=="completed"||status=="cancelled"]){
+
+                return res.status(400).send({status:false,message:"Invalid Status ,Order is already cancelled "})
+            }
+            
+            if (checkStatus.cancellable==false){
+                return res.status(400).send({status:false,message:"Sorryyy ! This Order is not Cancellable "})
+            
+            }
+
+            const update=await orderModel.findOneAndUpdate({_id:orderId,cancellable:true},{$set:{status:status}},{new:true}).populate("items.productId",["title", "price", "productImage"])
+            
+            
+            if(!update){return res.status(404).send({status:false,message:"Order not found With given OrderId"})}
+
+            return res.status(200).send({status:true ,message:"Status Updated Succesfully",data:update})
+
+        }else{
+            return res.status(400).send({status:false,message:"Please Provide a UserId"})
+        }
+        
+    } catch (error) {
+        
+        return res.status(500).send({status:false,message:error.message})
+    }
+}
+
+module.exports={updateOrder}
 
 module.exports = { createOrder }

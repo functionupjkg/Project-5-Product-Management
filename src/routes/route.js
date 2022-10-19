@@ -44,6 +44,12 @@ router.delete("/users/:userId/cart", auth , cartController.deleteCart )
 //-------------------------- Order API ----------------------------------------
 
 router.post("/users/:userId/orders", auth, orderController.createOrder )
+router.put("/users/:userId/orders", auth ,orderController.updateOrder)
+
+
+
+
+
 
 
 

@@ -207,7 +207,7 @@ const getUserById = async function (req, res) {
                 return res.status(404).send({ status: false, msg: "No user register" })
             }
 
-            if (userSaveId !== userLoggedIn.toString()) { return res.status(403).send({ msg: "user is not Authorised for this operation", status: false }) }
+            if (userSaveId !== userLoggedIn.toString()) { return res.status(403).send({status: false , msg: "user is not Authorised for this operation"}) }
 
             return res.status(200).send({ status: true, message: "User profile details", data: userData })
 
@@ -242,7 +242,7 @@ const updateUser = async function (req, res) {
                 return res.status(404).send({ status: false, msg: "No user register" })
             }
 
-            if (userSaveId !== userLoggedIn.toString()) { return res.status(403).send({ msg: "user is not Authorised for this operation", status: false }) }
+            if (userSaveId !== userLoggedIn.toString()) { return res.status(403).send({status: false , msg: "user is not Authorised for this operation"}) }
             
             const file = req.files
 
@@ -371,7 +371,7 @@ const updateUser = async function (req, res) {
         }
         
         console.log(address)
-        const userUpdate = await userModel.findOneAndUpdate(userLoggedIn, { $set: updFiled }, { new: true })
+        const userUpdate = await userModel.findOneAndUpdate({_id:userLoggedIn}, { $set: updFiled }, { new: true })
 
         return res.status(200).send({ status: true, msg: "Update successfully done", data: userUpdate })
     
