@@ -96,8 +96,6 @@ const createCart = async (req, res) => {
 
                 return res.status(201).send({ status: true, msg: "Item added successfully and Cart updated!", data: addProduct })
 
-
-
             }
 
             let totalPrice = Math.round(quantity * productExist.price)

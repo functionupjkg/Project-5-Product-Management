@@ -16,9 +16,12 @@
 //     setTimeout(()=>{
 //         console.log(i)
 //     },1000)
-//     console.log(i)
-// }
+// //     console.log(i)
+// // }
 
-let availableSizes = "x     ,lkk , lk"  
+// let availableSizes = "x     ,lkk , lk"  
 
-console.log(availableSizes.split(",").map((x)=>x.trim().toUpperCase()))
+// console.log(availableSizes.split(",").map((x)=>x.trim().toUpperCase()))
+
+
+
