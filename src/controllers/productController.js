@@ -22,7 +22,7 @@ const createProduct = async function (req, res) {
             return res.status(400).send({ status: false, message: "Product title is required or should be valid" })
         }
 
-        data.title = title.split(" ").filter((x)=>x).join(" ")
+        data.title = title.split(" ").filter((x)=>x).join(" ") // "Nut      sh   " = ["N","u","t","","" ,"s" ,"h"] =>["N","u","t","s","h"] => Nut sh
 
         let titleExist = await productModel.findOne({ title });
         if (titleExist) {
@@ -81,7 +81,7 @@ const createProduct = async function (req, res) {
             return res.status(400).send({ status: false, message: "AvailableSizes is Required" })
         }
 
-        availableSizes = availableSizes.split(",").map((x) => x.trim().toUpperCase())
+        availableSizes = availableSizes.split(",").map((x) => x.trim().toUpperCase()) // split(",") => seperated the character from (,)
 
         let sizes = ["S", "XS", "M", "X", "L", "XXL", "XL"]
         for (let i = 0; i < availableSizes.length; i++) {
@@ -121,8 +121,8 @@ const getProduct = async function (req, res) {
 
         let { size, name, priceGreaterThan, priceLessThan, priceSort } = req.query
 
-        if (size || typeof size == "string") {
-               
+        if (size || typeof size == "string") { 
+                
             size = size.trim().toUpperCase()
             if (!["S", "XS", "M", "X", "L", "XXL", "XL"].includes(size)) { return res.status(400).send({ status: false, msg: "plz provide size for filter product" }) }
             productDetail.availableSizes = size

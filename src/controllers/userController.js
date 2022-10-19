@@ -245,7 +245,9 @@ const updateUser = async function (req, res) {
             if (userSaveId !== userLoggedIn.toString()) { return res.status(403).send({ msg: "user is not Authorised for this operation", status: false }) }
             
             const file = req.files
+
             if (Object.keys(req.body).length == 0 && (!file || file.length == 0)) {
+                
             return res.status(400).send({ status: false, msg: "data required for profile updated" })
         }
            

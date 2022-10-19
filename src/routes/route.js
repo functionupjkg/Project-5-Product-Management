@@ -40,6 +40,8 @@ router.post("/users/:userId/cart", auth , cartController.createCart )
 
 router.get("/users/:userId/cart", auth , cartController.getCart )
 
+router.put("/users/:userId/cart", auth , cartController.updateCart )
+
 router.delete("/users/:userId/cart", auth , cartController.deleteCart )
 
 module.exports = router
