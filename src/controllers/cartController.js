@@ -63,7 +63,7 @@ const createCart = async (req, res) => {
 
             if (cartExist) {
 
-                if (!isValid(cartId)) { return res.status(400).send({ status: false, msg: "please provide productId" }) }
+                if (!isValid(cartId)) { return res.status(400).send({ status: false, msg: "please provide cartId" }) }
 
                 if (!isValidObjectId(cartId)) { return res.status(400).send({ status: false, msg: "Invalid cartId" }) }
 
