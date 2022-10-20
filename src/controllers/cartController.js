@@ -17,16 +17,16 @@ const createCart = async (req, res) => {
 
             if (!isValidObjectId(userId)) { return res.status(400).send({ msg: "userId is InValid", status: false }) }
 
+            if (userSaveId !== userId.toString()) { return res.status(403).send({ msg: "user is not Authorised for this operation", status: false }) }
+
             const userData = await userModel.findOne({ _id: userId, isDeleted: false })
 
             if (!userData) {
                 return res.status(404).send({ status: false, msg: "No user register" })
             }
 
-            if (userSaveId !== userId.toString()) { return res.status(403).send({ msg: "user is not Authorised for this operation", status: false }) }
-
             if (Object.keys(req.body) == 0) {
-                return res.status(400).send({ status: false, msg: "" })
+                return res.status(400).send({ status: false, msg: "No parameter provided" })
             }
 
             let { productId, quantity, cartId } = req.body
@@ -136,14 +136,13 @@ const getCart = async (req, res) => {
 
             if (!isValidObjectId(userId)) { return res.status(400).send({ msg: "userId is InValid", status: false }) }
 
+            if (userSaveId !== userId.toString()) { return res.status(403).send({ msg: "user is not Authorised for this operation", status: false }) }
+
             const userData = await userModel.findOne({ _id: userId, isDeleted: false })
 
             if (!userData) {
                 return res.status(404).send({ status: false, msg: "No user register" })
             }
-
-            if (userSaveId !== userId.toString()) { return res.status(403).send({ msg: "user is not Authorised for this operation", status: false }) }
-
 
             const cartData = await cartModel.findOne({ userId: userId, isDeleted: false }).populate("items.productId", ["title", "price", "productImage"])
 
@@ -175,13 +174,13 @@ const updateCart = async function (req, res) {
 
             if (!isValidObjectId(userId)) { return res.status(400).send({ msg: "userId is InValid", status: false }) }
 
+            if (userSaveId !== userId.toString()) { return res.status(403).send({ msg: "user is not Authorised for this operation", status: false }) }
+
             const userData = await userModel.findOne({ _id: userId, isDeleted: false })
 
             if (!userData) {
                 return res.status(404).send({ status: false, msg: "No user register" })
             }
-
-            if (userSaveId !== userId.toString()) { return res.status(403).send({ msg: "user is not Authorised for this operation", status: false }) }
 
             let data = req.body
             let { productId, cartId, removeProduct } = data
@@ -216,7 +215,7 @@ const updateCart = async function (req, res) {
             // if(req.token.userId !== cartId){
             //     return res.status(403).send({ status: false, message: `You are not valid user to update this cart` })
             // }
-            let findCart = await cartModel.findOne({ _id: cartId })
+            let findCart = await cartModel.findOne({ _id: cartId }) 
             console.log(findCart)
             if (!findCart) {
                 return res.status(404).send({ status: false, message: `CartId : ${cartId} not existed ` })
@@ -290,13 +289,13 @@ const deleteCart = async function (req, res) {
 
             if (!isValidObjectId(userId)) { return res.status(400).send({ msg: "userId is InValid", status: false }) }
 
+            if (userSaveId !== userId.toString()) { return res.status(403).send({ msg: "user is not Authorised for this operation", status: false }) }
+
             const userData = await userModel.findOne({ _id: userId, isDeleted: false })
 
             if (!userData) {
                 return res.status(404).send({ status: false, msg: "No user register" })
             }
-
-            if (userSaveId !== userId.toString()) { return res.status(403).send({ msg: "user is not Authorised for this operation", status: false }) }
 
             const checkCart = await cartModel.findOneAndUpdate({ userId: userId }, { $set: { items: [], totalPrice: 0, totalItems: 0 } })
 

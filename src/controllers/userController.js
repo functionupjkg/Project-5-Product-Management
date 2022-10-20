@@ -200,15 +200,15 @@ const getUserById = async function (req, res) {
         if (userLoggedIn) {
 
             if (!isValidObjectId(userLoggedIn)) { return res.status(400).send({ msg: "userId is InValid", status: false }) }
+            
+            if (userSaveId !== userLoggedIn.toString()) { return res.status(403).send({status: false , msg: "user is not Authorised for this operation"}) }
 
             const userData = await userModel.findOne({ _id: userLoggedIn, isDeleted: false })
 
             if (!userData) {
                 return res.status(404).send({ status: false, msg: "No user register" })
             }
-
-            if (userSaveId !== userLoggedIn.toString()) { return res.status(403).send({status: false , msg: "user is not Authorised for this operation"}) }
-
+            
             return res.status(200).send({ status: true, message: "User profile details", data: userData })
 
 
@@ -235,14 +235,14 @@ const updateUser = async function (req, res) {
         if (userLoggedIn) {
 
             if (!isValidObjectId(userLoggedIn)) { return res.status(400).send({ msg: "userId is InValid", status: false }) }
+            
+            if (userSaveId !== userLoggedIn.toString()) { return res.status(403).send({status: false , msg: "user is not Authorised for this operation"}) }
 
-            const userData = await userModel.findOne({_id : userLoggedIn , isDeleted : false})
+            const userData = await userModel.findOne({ _id: userLoggedIn, isDeleted: false })
 
             if (!userData) {
                 return res.status(404).send({ status: false, msg: "No user register" })
             }
-
-            if (userSaveId !== userLoggedIn.toString()) { return res.status(403).send({status: false , msg: "user is not Authorised for this operation"}) }
             
             const file = req.files
 

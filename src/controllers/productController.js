@@ -35,7 +35,7 @@ const createProduct = async function (req, res) {
 
         data.description = description.split(" ").filter((x)=>x).join(" ")
 
-        if (!isValidPrice(price)) {  // price zero handle krna hai
+        if (!isValidPrice(price)) {  
             return res.status(400).send({ status: false, message: "Product price is required or should be valid (Ex- Number/Desimal) " })
         }
         if (!isValid(currencyId)) {
@@ -50,13 +50,16 @@ const createProduct = async function (req, res) {
         if (currencyFormat !== "₹") {
             return res.status(400).send({ status: false, message: "Currency Format Only ₹ is accepted" })
         }
-        if (isFreeShipping || typeof isFreeShipping == "string") { // handle upperCase Lowercase Letter
+        if (isFreeShipping || typeof isFreeShipping == "string" ) { 
                 
-            //    isFreeShipping = Boolean(isFreeShipping.trim().toLowerCase())
-            //    console.log(typeof isFreeShipping, isFreeShipping)
+            isFreeShipping = isFreeShipping.trim().toLowerCase()
+
             if (isFreeShipping != "true" && isFreeShipping != "false") {
                 return res.status(400).send({ status: false, message: "isFreeShipping should be boolean value" })
             }
+            
+            data.isFreeShipping = isFreeShipping  
+
         }
 
         if (files.length === 0) {
@@ -127,26 +130,23 @@ const getProduct = async function (req, res) {
             if (!["S", "XS", "M", "X", "L", "XXL", "XL"].includes(size)) { return res.status(400).send({ status: false, msg: "plz provide size for filter product" }) }
             productDetail.availableSizes = size
         }
-        if (name || typeof name == "string") { // handle starting wale aana chahiye jo naam dala ho
+        if (name || typeof name == "string") { 
 
             if (!isValid(name)) { return res.status(400).send({ status: false, msg: "Plz provide valid name" }) }
 
-            // const product = productModel.findOne({ title: { $regex: name, $options: "i" }, isDeleted: false })
-            // if (!product) { return res.status(404).send({ status: false, msg: "" }) }
-
-            productDetail.title = { $regex: name, $options: "i" }
+            productDetail.title = { $regex: name, $options: "i" }  
 
         }
         if (priceGreaterThan || typeof priceGreaterThan == "string") {
             if (!/^(\d*\.)?\d+$/.test(priceGreaterThan)) { return res.status(400).send({status : false , msg : "provide valid price to filter"}) }
-            productDetail.price = { $gt: Number(priceGreaterThan) }
+            productDetail.price = { $gt: Number(priceGreaterThan) } // findOne({price :{$gt : 100}})
         }
         if (priceLessThan || typeof priceLessThan == "string") {
             if (!/^(\d*\.)?\d+$/.test(priceLessThan)) { return res.status(400).send({status : false , msg : "provide valid price for filter"}) }
             if (!productDetail.price) {
-                productDetail.price = { $lt: Number(priceGreaterThan) }
+                productDetail.price = { $lt: Number(priceGreaterThan) } //findOne({price :{$lt : 100}})
             }
-            productDetail.price.$lt = Number(priceLessThan)
+            productDetail.price.$lt = Number(priceLessThan)  // findOne({price :{$gt : 100 , $lt : 500}})
 
         }
         if (priceSort || typeof priceSort == "string") {
@@ -211,7 +211,6 @@ const updateProduct = async function (req, res) {
         console.log(data)
 
         if ((Object.keys(data).length == 0) && (!file || file.length == 0)) { return res.status(400).send({ status: false, msg: "No data for updation , plz provide data" }) }
-        // if((Object.values(data).join("").length == 0) && (!file || file.length ==0) ) {return res.status(400).send({status : false , msg : "provide valid values"})}
 
         let { title, description, price, currencyId, currencyFormat, isFreeShipping, style, availableSizes, installments, productImage } = data
 
@@ -240,7 +239,7 @@ const updateProduct = async function (req, res) {
 
             updProduct.description = description
         }
-        if (price || typeof price == "string") { // price zero case handle
+        if (price || typeof price == "string") { 
 
             if (!isValidPrice(price)) { return res.status(400).send({ status: false, msg: "Product price should be valid (Ex- Number/Desimal)" }) }
             updProduct.price = Number(price)
@@ -257,10 +256,14 @@ const updateProduct = async function (req, res) {
             if (currencyFormat !== "₹") { return res.status(400).send({ status: false, message: "Currency Format Only ₹ is accepted" }) }
 
         }
-        if (isFreeShipping || typeof isFreeShipping == "string") { // isFreeShipping lowercase to uppercase all handle
+        if (isFreeShipping || typeof isFreeShipping == "string") { 
 
-            if (isFreeShipping != "true" && isFreeShipping != "false") { return res.status(400).send({ status: false, msg: "isFreeShipping should be Boolean Value" }) }
+            isFreeShipping = isFreeShipping.trim().toLowerCase()
 
+            if (isFreeShipping != "true" && isFreeShipping != "false") {
+                return res.status(400).send({ status: false, message: "isFreeShipping should be boolean value" })
+            }
+            
             updProduct.isFreeShipping = isFreeShipping
         }
         if (file.length !== 0) {

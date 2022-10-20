@@ -29,7 +29,6 @@ const isValidpassword = function (pass) {
 //<<----------------Validation for pincode ---------------->>
 const isValidpin = function (pincode) {
     return (/^[1-9][0-9]{5}$/).test(pincode)
-    //^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$
 
 };
 
@@ -47,8 +46,8 @@ const isValidfile = function (filename) {
 
 //<<----------------Validation for Price ---------------->>
 const isValidPrice = function (price) {
-    // return /^[1-9][0-9]{0,7}(\.[0-9]{2})?$/.test(price);
-    return /^(\d*\.)?\d+$/.test(price);
+
+    return /^(?!0.00)(\d+\.)(\d\d)$/.test(price);
   }; 
 
 //<<----------------Validation for installment ---------------->>

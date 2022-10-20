@@ -10,28 +10,23 @@ const createOrder = async function (req, res) {
     try {
 
         const userSaveId = req.loggedInUser.user
-        let userId = req.params.userId
-        let data = req.body
+        const userId = req.params.userId
 
+        if (userId) {
 
-        if (!isValid(userId)) {
-            return res.status(400).send({ status: false, message: `Please Enter valid UserId` })
-        }
-        if (!isValidObjectId(userId)) {
-            return res.status(400).send({ status: false, message: `Enter Valid UserId` })
-        }
-        let findUser = await userModel.findOne({ _id: userId })
-        console.log(findUser)
-        if (!findUser) {
-            return res.status(404).send({ status: false, message: `UserId not existed` })
-        }
+            if (!isValidObjectId(userId)) { return res.status(400).send({ msg: "userId is InValid", status: false }) }
 
-        console.log(userSaveId)
-        if (userSaveId !== userId.toString()) {
-            return res.status(403).send({ status: false, message: "User is not Authorised for this operation", })
-        }
-        // validation of cart details
-        if (Object.keys(data).length == 0) {
+            if (userSaveId !== userId.toString()) { return res.status(403).send({ msg: "user is not Authorised for this operation", status: false }) }
+
+            const userData = await userModel.findOne({ _id: userId, isDeleted: false })
+
+            if (!userData) {
+                return res.status(404).send({ status: false, msg: "No user register" })
+            }
+
+            let data = req.body
+
+            if (Object.keys(data).length == 0) {
             return res.status(400).send({ status: false, message: `Data is required for Order Placed` })
         }
 
@@ -59,102 +54,98 @@ const createOrder = async function (req, res) {
             }
 
         }
-      
+
 
         let { items, totalPrice, totalItems } = findCart
 
         let totalQuantity = 0
         items.forEach(value => totalQuantity += value.quantity)
 
-          
+
 
         let orderData = { userId, items, totalPrice, totalItems, totalQuantity, cancellable }
         let placedOrder = await orderModel.create(orderData)
         res.status(201).send({ status: true, message: "Order Created Successfully", data: placedOrder })
 
         // removed product data in cart after the place oder & user cart will be empty
-       await cartModel.findOneAndUpdate({ userId: userId }, { items: [], totalItems: 0, totalPrice: 0 }, { new: true });
+        await cartModel.findOneAndUpdate({ userId: userId }, { items: [], totalItems: 0, totalPrice: 0 }, { new: true });
 
-
-    }
-
-
-    catch (err) {
+        }else{
+            return res.status(500).send({status : false , msg : "Provide userId"})
+        }
+    }catch (err) {
         return res.status(500).send({ status: false, message: err.message })
     }
 }
 
-const updateOrder=async function(req,res){
+const updateOrder = async function (req, res) {
 
     try {
+
+        let userId = req.params.userId
+        let tokenUserId = req.loggedInUser.user
         
-        let userId=req.params.userId
-        let tokenUserId=req.loggedInUser.user
-        let data=req.body
-        const {orderId,status}=data
-        if(userId){
+        if (userId) {
 
-            if(!isValidObjectId(userId)){return res.status(400).send({status:false,message:"Invalid UserId"})}
+            if (!isValidObjectId(userId)) { return res.status(400).send({ status: false, message: "Invalid UserId" }) }
             
-            
-            const checkUser=await userModel.findById(userId)
-            
-            if(!checkUser)
-            {return res.status(404).send({status:false,message:"User not found with given UserId"})}
-           
-            if(userId!==tokenUserId.toString()){return res.status(403).send({status:false,message:"user is not Authorised for this operation"})}
-            
-            if(Object.keys(data).length==0)
-            {return res.status(400).send({status:false,message:"Body should not be empty"})}
-            
-            if(!orderId){return res.status(400).send({status:false,message:"OrderId is required"})}
+            if (userId !== tokenUserId.toString()) { return res.status(403).send({ status: false, message: "user is not Authorised for this operation" }) }
 
-            if(!isValidObjectId(orderId)){return res.status(400).send({status:false,message:"Invalid orderId"})}
+            const checkUser = await userModel.findOne({_id : userId , isDeleted : false})
 
-            if(!status){return res.status(400).send({status:false,message:"Status is required"})}
+            if (!checkUser) { return res.status(404).send({ status: false, message: "No register User" }) }
+
+            let data = req.body
+            let { orderId, status } = data
+
+            if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "Body should not be empty" }) }
+
+            if (!orderId) { return res.status(400).send({ status: false, message: "OrderId is required" }) }
+
+            if (!isValidObjectId(orderId)) { return res.status(400).send({ status: false, message: "Invalid orderId" }) }
+
+            if (!status) { return res.status(400).send({ status: false, message: "Status is required" }) }
 
 
-            let statusArr=[ "completed", "cancelled"]
-            
+            let statusArr = ["completed", "cancelled"]
+
             // if(status=="pending"){return res.status(400).send({status:false,message:"Status pending is not allowed"})}
-              
-            if(!statusArr.includes(status))
-            {return res.status(400).send({status:false,message:"Status should only Completed or cancelled"})}
-            
-            const checkStatus=await orderModel.findById(orderId)
+
+            if (!statusArr.includes(status)) { return res.status(400).send({ status: false, message: "Status should only Completed or cancelled" }) }
+
+            const checkStatus = await orderModel.findById(orderId)
             console.log(checkStatus)
-            
-            if(checkStatus.status=="completed"&&[status=="cancelled" || status=="completed"]){
-                
-                return res.status(400).send({status:false,message:"Invalid Status ,Order is already completed "})
-            }
-            if(checkStatus.status=="cancelled"&&[status=="completed"||status=="cancelled"]){
 
-                return res.status(400).send({status:false,message:"Invalid Status ,Order is already cancelled "})
+            if (checkStatus.status == "completed" && [status == "cancelled" || status == "completed"]) {
+
+                return res.status(400).send({ status: false, message: "Invalid Status ,Order is already completed " })
             }
-            
-            if (checkStatus.cancellable==false){
-                return res.status(400).send({status:false,message:"Sorryyy ! This Order is not Cancellable "})
-            
+            if (checkStatus.status == "cancelled" && [status == "completed" || status == "cancelled"]) {
+
+                return res.status(400).send({ status: false, message: "Invalid Status ,Order is already cancelled " })
             }
 
-            const update=await orderModel.findOneAndUpdate({_id:orderId,cancellable:true},{$set:{status:status}},{new:true}).populate("items.productId",["title", "price", "productImage"])
-            
-            
-            if(!update){return res.status(404).send({status:false,message:"Order not found With given OrderId"})}
+            if (checkStatus.cancellable == false) {
+                return res.status(400).send({ status: false, message: "Sorryyy ! This Order is not Cancellable " })
 
-            return res.status(200).send({status:true ,message:"Status Updated Succesfully",data:update})
+            }
 
-        }else{
-            return res.status(400).send({status:false,message:"Please Provide a UserId"})
+            const update = await orderModel.findOneAndUpdate({ _id: orderId, cancellable: true }, { $set: { status: status } }, { new: true }).populate("items.productId", ["title", "price", "productImage"])
+
+
+            if (!update) { return res.status(404).send({ status: false, message: "Order not found With given OrderId" }) }
+
+            return res.status(200).send({ status: true, message: "Status Updated Succesfully", data: update })
+
+        } else {
+            return res.status(400).send({ status: false, message: "Please Provide a UserId" })
         }
-        
+
     } catch (error) {
-        
-        return res.status(500).send({status:false,message:error.message})
+
+        return res.status(500).send({ status: false, message: error.message })
     }
 }
 
-module.exports={updateOrder}
+module.exports = { updateOrder ,createOrder }
 
-module.exports = { createOrder }
