@@ -8,40 +8,30 @@ const {auth} = require("../middleWare/auth")
 
 
 
-//----------------------------------  User API   -----------------------------------
+//----------------------------------  [ User API ]  -----------------------------------
 
 router.post("/register",userController.createUser)
-
 router.post("/login" , userController.loginUser)
-
 router.get("/user/:userId/profile" , auth, userController.getUserById)
-
 router.put("/user/:userId/profile", auth, userController.updateUser)
 
-//--------------------------- Product API ----------------------------------------
+//---------------------------[ Product API ] ----------------------------------------
 
 router.post("/products" , productController.createProduct)
-
 router.get("/products" , productController.getProduct)
-
 router.get("/products/:productId" , productController.getDetailsFromParam)
-
 router.put("/products/:productId" , productController.updateProduct)
-
 router.delete("/products/:productId", productController.deleteById)
 
-//--------------------------  Cart API   ----------------------------------------
+//-------------------------- [ Cart API ]  ----------------------------------------
 
 router.post("/users/:userId/cart", auth , cartController.createCart )
-
 router.get("/users/:userId/cart", auth , cartController.getCart )
-
 router.put("/users/:userId/cart", auth , cartController.updateCart )
-
 router.delete("/users/:userId/cart", auth , cartController.deleteCart )
 
 
-//-------------------------- Order API ----------------------------------------
+//-------------------------- [ Order API ] ----------------------------------------
 
 router.post("/users/:userId/orders", auth, orderController.createOrder )
 router.put("/users/:userId/orders", auth ,orderController.updateOrder)

@@ -5,7 +5,7 @@ const { isValid } = require("../validations/validator")
 const { isValidObjectId } = require("mongoose")
 
 
-
+//================================================ [ Create Order API ] =============================================
 const createOrder = async function (req, res) {
     try {
 
@@ -14,14 +14,14 @@ const createOrder = async function (req, res) {
 
         if (userId) {
 
-            if (!isValidObjectId(userId)) { return res.status(400).send({ msg: "userId is InValid", status: false }) }
+            if (!isValidObjectId(userId)) { return res.status(400).send({ message: "userId is InValid", status: false }) }
 
-            if (userSaveId !== userId.toString()) { return res.status(403).send({ msg: "user is not Authorised for this operation", status: false }) }
+            if (userSaveId !== userId) { return res.status(403).send({ message: "user is not Authorised for this operation", status: false }) }
 
             const userData = await userModel.findOne({ _id: userId, isDeleted: false })
 
             if (!userData) {
-                return res.status(404).send({ status: false, msg: "No user register" })
+                return res.status(404).send({ status: false, message: "No user register" })
             }
 
             let data = req.body
@@ -71,13 +71,15 @@ const createOrder = async function (req, res) {
         await cartModel.findOneAndUpdate({ userId: userId }, { items: [], totalItems: 0, totalPrice: 0 }, { new: true });
 
         }else{
-            return res.status(500).send({status : false , msg : "Provide userId"})
+            return res.status(500).send({status : false , message : "Provide userId"})
         }
     }catch (err) {
         return res.status(500).send({ status: false, message: err.message })
     }
 }
 
+
+//================================================ [ Update Order API ] =============================================
 const updateOrder = async function (req, res) {
 
     try {
@@ -89,7 +91,7 @@ const updateOrder = async function (req, res) {
 
             if (!isValidObjectId(userId)) { return res.status(400).send({ status: false, message: "Invalid UserId" }) }
             
-            if (userId !== tokenUserId.toString()) { return res.status(403).send({ status: false, message: "user is not Authorised for this operation" }) }
+            if (userId !== tokenUserId) { return res.status(403).send({ status: false, message: "user is not Authorised for this operation" }) }
 
             const checkUser = await userModel.findOne({_id : userId , isDeleted : false})
 

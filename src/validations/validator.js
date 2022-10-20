@@ -46,8 +46,7 @@ const isValidfile = function (filename) {
 
 //<<----------------Validation for Price ---------------->>
 const isValidPrice = function (price) {
-
-    return /^(?!0.00)(\d+\.)(\d\d)$/.test(price);
+    return /^(?=.*[1-9])\d*(?:\.\d{1,2})?$/.test(price);
   }; 
 
 //<<----------------Validation for installment ---------------->>
@@ -55,7 +54,10 @@ const isValidPrice = function (price) {
     return /^[1-9][0-9]?$/.test(value); // 1-99 Number.
   };
 
-//---------------------------------------------------------------------------------//
+
+
+
+//--------------------------------- AWS Cofigration function------------------------------------------------//
 
 aws.config.update({
     accessKeyId: "AKIAY3L35MCRZNIRGT6N",
